@@ -5,7 +5,7 @@ Docling outputs are cached in .cache/conversions/ so re-runs skip already-conver
 
 Usage:
     uv run python build_dataset.py
-    uv run python build_dataset.py --repo oliverkinch/tidsskrift-dk-cc-by
+    uv run python build_dataset.py --repo oliverkinch/tidsskrift-dk
     uv run python build_dataset.py --progress downloads/progress_filtered.jsonl
     uv run python build_dataset.py --dry-run  # convert only, skip push
     uv run python build_dataset.py --no-cache  # ignore cache
@@ -23,7 +23,7 @@ FILTERED_DIR = BASE_DIR / "filtered"
 PROGRESS_FILE = BASE_DIR / "downloads" / "progress.jsonl"
 JOURNALS_FILE = BASE_DIR / "journals.json"
 CACHE_DIR = BASE_DIR / ".cache" / "conversions"
-DEFAULT_REPO = "oliverkinch/tidsskrift-dk-cc-by"
+DEFAULT_REPO = "oliverkinch/tidsskrift-dk"
 
 
 def load_metadata_lookup() -> dict[str, dict]:
