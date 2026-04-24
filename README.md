@@ -4,7 +4,7 @@ Scraper for [tidsskrift.dk](https://tidsskrift.dk), the Royal Danish Library's n
 
 Part of the [Danish Foundation Models](https://github.com/centre-for-humanities-computing/danish-foundation-models) project.
 
-The resulting dataset is [`oliverkinch/tidsskrift-dk-cc-by`](https://huggingface.co/datasets/oliverkinch/tidsskrift-dk-cc-by) on Hugging Face Hub. See [DATASET_CARD.md](DATASET_CARD.md) for dataset documentation.
+The resulting dataset is [`oliverkinch/tidsskrift-dk`](https://huggingface.co/datasets/oliverkinch/tidsskrift-dk) on Hugging Face Hub. See [DATASET_CARD.md](DATASET_CARD.md) for dataset documentation.
 
 ## Scripts
 
