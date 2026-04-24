@@ -1,0 +1,12 @@
+[project]
+name = "tidsskrift-scraper"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "docling>=2.90.0",
+    "datasets>=4.0.0",
+    "pypdf",
+    "langdetect",
+]
