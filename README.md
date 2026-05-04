@@ -12,6 +12,7 @@ The resulting dataset is [`oliverkinch/tidsskrift-dk`](https://huggingface.co/da
 |---|---|
 | `scraper.py` | Scrapes article metadata and downloads PDFs from tidsskrift.dk |
 | `filter_danish.py` | Filters downloaded PDFs to Danish-language articles only |
+| `filter_language.py` | Generic PDF language filter (e.g. English-only) |
 | `build_dataset.py` | Converts PDFs to markdown using Docling and pushes to Hugging Face Hub |
 
 ## Installation
@@ -38,11 +39,22 @@ uv run python scraper.py
 ```
 Downloads PDFs to `downloads/` and tracks progress in `progress.jsonl`.
 
+For dynamic English + explicit CC BY journal discovery and English-only article downloads:
+```bash
+uv run python scraper.py --english-cc-by
+```
+This writes to `downloads_english_cc_by/` with progress in `downloads_english_cc_by/progress_english_cc_by.jsonl`.
+
 **2. Filter to Danish**
 ```bash
 uv run python filter_danish.py
 ```
 Copies Danish-language PDFs to `filtered/`, skipping short or non-Danish files.
+
+To filter any source directory by language (e.g. English):
+```bash
+uv run python filter_language.py --source downloads_english_cc_by --target filtered_english --langs en
+```
 
 **3. Convert and push to Hugging Face**
 

@@ -7,6 +7,7 @@ Usage:
     uv run python build_dataset.py
     uv run python build_dataset.py --repo oliverkinch/tidsskrift-dk
     uv run python build_dataset.py --progress downloads/progress_filtered.jsonl
+    uv run python build_dataset.py --filtered-dir filtered_english --repo oliverkinch/tidsskrift-dk-en
     uv run python build_dataset.py --dry-run  # convert only, skip push
     uv run python build_dataset.py --no-cache  # ignore cache
 """
@@ -43,14 +44,14 @@ def load_journal_descriptions() -> dict[str, str]:
     return json.loads(JOURNALS_FILE.read_text(encoding="utf-8"))
 
 
-def convert_pdfs(use_cache: bool) -> list[dict]:
+def convert_pdfs(use_cache: bool, filtered_dir: Path) -> list[dict]:
     converter = DocumentConverter()
     meta_lookup = load_metadata_lookup()
     journal_descriptions = load_journal_descriptions()
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     records = []
-    pdf_paths = sorted(FILTERED_DIR.glob("*/*.pdf"))
+    pdf_paths = sorted(filtered_dir.glob("*/*.pdf"))
     print(f"Found {len(pdf_paths)} PDFs to convert\n")
 
     for i, pdf_path in enumerate(pdf_paths, 1):
@@ -96,6 +97,10 @@ def main():
     parser.add_argument("--repo", default=DEFAULT_REPO)
     parser.add_argument("--progress", default=str(BASE_DIR / "downloads" / "progress.jsonl"),
                         help="Path to progress JSONL file (default: downloads/progress.jsonl)")
+    parser.add_argument("--filtered-dir", default=None,
+                        help="Directory of filtered PDFs (default: filtered/)")
+    parser.add_argument("--dataset-card", default=None,
+                        help="Path to dataset card markdown file to upload as README.md")
     parser.add_argument("--dry-run", action="store_true", help="Convert but do not push")
     parser.add_argument("--no-cache", action="store_true", help="Ignore cached conversions")
     args = parser.parse_args()
@@ -103,7 +108,8 @@ def main():
     global PROGRESS_FILE
     PROGRESS_FILE = Path(args.progress)
 
-    records = convert_pdfs(use_cache=not args.no_cache)
+    filtered_dir = Path(args.filtered_dir) if args.filtered_dir else FILTERED_DIR
+    records = convert_pdfs(use_cache=not args.no_cache, filtered_dir=filtered_dir)
     print(f"\nTotal records: {len(records)}")
 
     ds = Dataset.from_list(records)
@@ -115,6 +121,18 @@ def main():
 
     print(f"\nPushing to {args.repo} ...")
     ds.push_to_hub(args.repo, split="train")
+
+    if args.dataset_card:
+        from huggingface_hub import HfApi
+        api = HfApi()
+        api.upload_file(
+            path_or_fileobj=args.dataset_card,
+            path_in_repo="README.md",
+            repo_id=args.repo,
+            repo_type="dataset",
+        )
+        print(f"Dataset card uploaded from {args.dataset_card}")
+
     print("Done.")
 
 
